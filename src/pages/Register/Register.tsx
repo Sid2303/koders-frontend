@@ -237,9 +237,9 @@ const Register = () => {
                 <option value="" disabled>
                   Select a role
                 </option>
-                <option value="user">User</option>
-                <option value="manager">Manager</option>
-                <option value="admin">Admin</option>
+                <option value="user">user</option>
+                <option value="manager">manager</option>
+                <option value="admin">admin</option>
               </select>
             </div>
 

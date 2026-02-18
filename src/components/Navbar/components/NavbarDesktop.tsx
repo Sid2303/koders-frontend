@@ -6,9 +6,6 @@ import MenuItem from "@mui/material/MenuItem";
 import Divider from "@mui/material/Divider";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PersonIcon from "@mui/icons-material/Person";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
-import PeopleIcon from "@mui/icons-material/People";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import ProfileModal from "./ProfileModal";
 import { getUser } from "../../../utils/auth";
@@ -16,9 +13,14 @@ import { getUser } from "../../../utils/auth";
 interface NavbarDesktopProps {
   isLoggedIn: boolean;
   onLogout: () => void;
+  modules: { name: string; path: string }[];
 }
 
-const NavbarDesktop = ({ isLoggedIn, onLogout }: NavbarDesktopProps) => {
+const NavbarDesktop = ({
+  isLoggedIn,
+  onLogout,
+  modules,
+}: NavbarDesktopProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
 
@@ -56,19 +58,17 @@ const NavbarDesktop = ({ isLoggedIn, onLogout }: NavbarDesktopProps) => {
       .slice(0, 2);
   };
 
-  const isAdmin = user?.role === "Admin";
-  const isManager = user?.role === "Manager";
+  const isAdmin = user?.role === "admin";
 
   return (
     <div className="navbar-desktop-menu">
       {isLoggedIn ? (
         <>
-          <Link to="/" className="navbar-link">
-            Dashboard
-          </Link>
-          <Link to="/tasks" className="navbar-link">
-            Tasks
-          </Link>
+          {modules.map((module) => (
+            <Link key={module.path} to={module.path} className="navbar-link">
+              {module.name}
+            </Link>
+          ))}
           <Avatar onClick={handleAvatarClick} className="navbar-avatar">
             {user ? getInitials(user.username) : "U"}
           </Avatar>
@@ -106,13 +106,18 @@ const NavbarDesktop = ({ isLoggedIn, onLogout }: NavbarDesktopProps) => {
             </MenuItem>
 
             {isAdmin && (
-              <MenuItem onClick={handleClose} className="profile-menu-item">
+              <MenuItem
+                component={Link}
+                to="/admin"
+                onClick={handleClose}
+                className="profile-menu-item"
+              >
                 <AdminPanelSettingsIcon className="profile-menu-icon" />
-                <span>Admin Board</span>
+                <span>Admin Panel</span>
               </MenuItem>
             )}
 
-            {(isAdmin || isManager) && (
+            {/* {(isAdmin || isManager) && (
               <MenuItem onClick={handleClose} className="profile-menu-item">
                 <PeopleIcon className="profile-menu-icon" />
                 <span>Team Management</span>
@@ -124,14 +129,7 @@ const NavbarDesktop = ({ isLoggedIn, onLogout }: NavbarDesktopProps) => {
                 <DashboardIcon className="profile-menu-icon" />
                 <span>System Dashboard</span>
               </MenuItem>
-            )}
-
-            {isManager && (
-              <MenuItem onClick={handleClose} className="profile-menu-item">
-                <SupervisorAccountIcon className="profile-menu-icon" />
-                <span>Manager Settings</span>
-              </MenuItem>
-            )}
+            )} */}
 
             <Divider className="profile-menu-divider" />
 

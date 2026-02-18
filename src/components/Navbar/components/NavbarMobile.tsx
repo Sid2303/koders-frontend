@@ -16,6 +16,7 @@ interface NavbarMobileProps {
   isOpen: boolean;
   onLogout: () => void;
   onClose: () => void;
+  modules: { name: string; path: string }[];
 }
 
 const NavbarMobile = ({
@@ -23,6 +24,7 @@ const NavbarMobile = ({
   isOpen,
   onLogout,
   onClose,
+  modules,
 }: NavbarMobileProps) => {
   const [profileModalOpen, setProfileModalOpen] = useState(false);
 
@@ -46,8 +48,8 @@ const NavbarMobile = ({
       .slice(0, 2);
   };
 
-  const isAdmin = user?.role === "Admin";
-  const isManager = user?.role === "Manager";
+  const isAdmin = user?.role === "admin";
+  const isManager = user?.role === "manager";
 
   return (
     <>
@@ -86,16 +88,16 @@ const NavbarMobile = ({
           <div className="mobile-menu-items">
             {isLoggedIn ? (
               <>
-                <Link to="/" onClick={onClose} className="mobile-menu-link">
-                  Dashboard
-                </Link>
-                <Link
-                  to="/tasks"
-                  onClick={onClose}
-                  className="mobile-menu-link"
-                >
-                  Tasks
-                </Link>
+                {modules.map((module) => (
+                  <Link
+                    key={module.path}
+                    to={module.path}
+                    onClick={onClose}
+                    className="mobile-menu-link"
+                  >
+                    {module.name}
+                  </Link>
+                ))}
 
                 <button
                   onClick={handleProfileClick}

@@ -12,6 +12,21 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated());
   const navigate = useNavigate();
 
+  const modules: { name: string; path: string }[] = [
+    {
+      name: "Home",
+      path: "/",
+    },
+    {
+      name: "Dashboard",
+      path: "/dashboard",
+    },
+    {
+      name: "Tasks",
+      path: "/tasks",
+    },
+  ];
+
   const handleLogout = () => {
     logout();
     setIsLoggedIn(false);
@@ -31,7 +46,11 @@ const Navbar = () => {
             Koders
           </Link>
 
-          <NavbarDesktop isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+          <NavbarDesktop
+            isLoggedIn={isLoggedIn}
+            onLogout={handleLogout}
+            modules={modules}
+          />
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -53,6 +72,7 @@ const Navbar = () => {
         isOpen={mobileMenuOpen}
         onLogout={handleLogout}
         onClose={handleCloseMobile}
+        modules={modules}
       />
     </nav>
   );

@@ -1,0 +1,122 @@
+.admin-container {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.admin-header {
+  margin-bottom: 2rem;
+}
+
+.admin-header h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #111827;
+}
+
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.user-card {
+  transition: all 0.3s ease;
+  border: 1px solid #e5e7eb;
+}
+
+.user-card:hover {
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.1),
+    0 2px 4px -2px rgb(0 0 0 / 0.1);
+  transform: translateY(-2px);
+}
+
+.user-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.user-icon {
+  background: #f3f4f6;
+  padding: 0.5rem;
+  border-radius: 50%;
+  color: #6b7280;
+}
+
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-tasks {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1rem;
+}
+
+.tasks-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  color: #6b7280;
+}
+
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: #f9fafb;
+  border-radius: 4px;
+  gap: 0.5rem;
+}
+
+.task-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .admin-container {
+    padding: 1rem;
+  }
+
+  .admin-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .users-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .user-card-header {
+    flex-direction: column;
+  }
+
+  .user-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
