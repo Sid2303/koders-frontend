@@ -18,7 +18,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 4rem;
+  height: 80px;
   position: relative;
   z-index: 51;
 }
@@ -35,7 +35,7 @@
 .navbar-desktop-menu {
   display: none;
   align-items: center;
-  gap: 1.5rem;
+  gap: 20px;
 }
 
 .navbar-link {
@@ -52,7 +52,7 @@
   background-color: #ef4444;
   color: white;
   padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -65,14 +65,30 @@
 .navbar-button-register {
   background-color: #3b82f6;
   color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
+  padding: 10px 20px;
+  border-radius: 12px;
   text-decoration: none;
   transition: background-color 0.2s;
 }
 
 .navbar-button-register:hover {
   background-color: #2563eb;
+}
+
+.login-register {
+  display: flex;
+  gap: 1rem;
+}
+
+.navbar-button-login {
+  background-color: transparent;
+  color: #374151;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  text-decoration: none;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
 }
 
 .mobile-menu-button {
@@ -120,7 +136,7 @@
 .mobile-menu-content {
   background-color: white;
   border-top: 1px solid #e5e7eb;
-  padding: 1rem;
+  padding: 20px;
   max-height: calc(100vh - 5rem);
   overflow-y: auto;
 }
@@ -128,27 +144,22 @@
 .mobile-menu-items {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 25px;
 }
 
 .mobile-menu-link {
   display: block;
   color: #374151;
   text-decoration: none;
-  padding: 0.5rem 0;
+  padding: 15px 0;
   transition: all 0.2s;
-}
-
-.mobile-menu-link:hover {
-  color: #2563eb;
-  transform: translateX(0.5rem);
 }
 
 .mobile-menu-item-button {
   width: 100%;
   text-align: left;
   padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
   transition: all 0.2s;
