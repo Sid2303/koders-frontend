@@ -1,0 +1,7 @@
+/* Home Page Styles - Using Tailwind classes but organized here for reference */
+.home-container {
+  min-height: 100vh;
+}
+
+/* The Home page primarily uses Tailwind CSS for styling */
+/* Custom styles can be added here as needed */
