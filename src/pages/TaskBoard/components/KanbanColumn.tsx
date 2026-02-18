@@ -34,6 +34,7 @@ interface KanbanColumnProps {
     newStatus: "todo" | "in-progress" | "review" | "completed",
   ) => void;
   onViewTask: (task: Task) => void;
+  onTaskDeleted: () => void;
   onDragStart: (task: Task) => void;
   onDragEnd: () => void;
   onDrop: (status: "todo" | "in-progress" | "review" | "completed") => void;
@@ -48,6 +49,7 @@ const KanbanColumn = ({
   color,
   onUpdateStatus,
   onViewTask,
+  onTaskDeleted,
   onDragStart,
   onDragEnd,
   onDrop,
@@ -91,6 +93,7 @@ const KanbanColumn = ({
               task={task}
               onUpdateStatus={onUpdateStatus}
               onViewTask={onViewTask}
+              onTaskDeleted={onTaskDeleted}
               onDragStart={onDragStart}
               onDragEnd={onDragEnd}
             />

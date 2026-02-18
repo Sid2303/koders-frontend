@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
@@ -9,8 +9,9 @@ import "./Navbar.css";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated());
   const navigate = useNavigate();
+  useLocation();
+  const isLoggedIn = isAuthenticated();
 
   const modules: { name: string; path: string }[] = [
     {
@@ -29,7 +30,6 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    setIsLoggedIn(false);
     setMobileMenuOpen(false);
     navigate("/login");
   };

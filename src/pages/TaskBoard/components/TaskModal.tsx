@@ -1,8 +1,4 @@
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   TextField,
   Button,
   Select,
@@ -13,11 +9,11 @@ import {
   Box,
   Typography,
   Divider,
-  IconButton,
   Avatar,
+  Alert,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect } from "react";
+import CustomisedModal from "../../../components/CustomisedModal";
 import "./TaskModal.css";
 
 interface Task {
@@ -42,6 +38,7 @@ interface Task {
     | string;
   dueDate?: string;
   tags?: string[];
+  deleted?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -84,6 +81,17 @@ const TaskModal = ({ open, task, onClose, onSave }: TaskModalProps) => {
   useEffect(() => {
     if (task) {
       const fetchUsernames = async () => {
+        setEditedTask({
+          title: task.title,
+          description: task.description || "",
+          status: task.status,
+          priority: task.priority,
+          dueDate: task.dueDate
+            ? new Date(task.dueDate).toISOString().split("T")[0]
+            : "",
+          tags: task.tags || [],
+        });
+
         const apiUrl = import.meta.env.VITE_API_URL;
         const token = localStorage.getItem("token");
 
@@ -140,17 +148,6 @@ const TaskModal = ({ open, task, onClose, onSave }: TaskModalProps) => {
           setCreatedByUsername(null);
         }
       };
-
-      setEditedTask({
-        title: task.title,
-        description: task.description || "",
-        status: task.status,
-        priority: task.priority,
-        dueDate: task.dueDate
-          ? new Date(task.dueDate).toISOString().split("T")[0]
-          : "",
-        tags: task.tags || [],
-      });
 
       fetchUsernames();
     }
@@ -218,297 +215,292 @@ const TaskModal = ({ open, task, onClose, onSave }: TaskModalProps) => {
   };
 
   return (
-    <Dialog
-      key={task?._id}
+    <CustomisedModal
+      dialogKey={task?._id}
       open={open && !!task}
       onClose={onClose}
       maxWidth="md"
-      fullWidth
-    >
-      {task && (
-        <>
-          <DialogTitle sx={{ pb: 1 }}>
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <Typography variant="h6" fontWeight={600}>
-                Task Details
-              </Typography>
-              <IconButton onClick={onClose} size="small">
-                <CloseIcon />
-              </IconButton>
-            </Box>
-          </DialogTitle>
-
-          <Divider />
-
-          <DialogContent sx={{ pt: 3 }}>
-            <Box className="task-modal-content">
-              <TextField
-                fullWidth
-                label="Title"
-                value={editedTask.title || ""}
-                onChange={(e) =>
-                  setEditedTask({ ...editedTask, title: e.target.value })
-                }
-                variant="outlined"
-                sx={{ mb: 2 }}
+      title={
+        task && (
+          <Box display="flex" alignItems="center" gap={1}>
+            <Typography variant="h6" fontWeight={600}>
+              Task Details
+            </Typography>
+            {task.deleted && (
+              <Chip
+                label="Deleted"
+                size="small"
+                sx={{
+                  backgroundColor: "#fee2e2",
+                  color: "#dc2626",
+                  fontWeight: 600,
+                  fontSize: "11px",
+                }}
               />
-
-              <TextField
-                fullWidth
-                label="Description"
-                value={editedTask.description || ""}
-                onChange={(e) =>
-                  setEditedTask({ ...editedTask, description: e.target.value })
-                }
-                multiline
-                rows={4}
-                variant="outlined"
-                sx={{ mb: 2 }}
-              />
-
-              <Box display="flex" gap={2} mb={2}>
-                <FormControl fullWidth>
-                  <InputLabel>Status</InputLabel>
-                  <Select
-                    value={editedTask.status || "todo"}
-                    onChange={(e) =>
-                      setEditedTask({
-                        ...editedTask,
-                        status: e.target.value as Task["status"],
-                      })
-                    }
-                    label="Status"
-                  >
-                    <MenuItem value="todo">To Do</MenuItem>
-                    <MenuItem value="in-progress">In Progress</MenuItem>
-                    <MenuItem value="review">Need Review</MenuItem>
-                    <MenuItem value="completed">Done</MenuItem>
-                  </Select>
-                </FormControl>
-
-                <FormControl fullWidth>
-                  <InputLabel>Priority</InputLabel>
-                  <Select
-                    value={editedTask.priority || "medium"}
-                    onChange={(e) =>
-                      setEditedTask({
-                        ...editedTask,
-                        priority: e.target.value as Task["priority"],
-                      })
-                    }
-                    label="Priority"
-                  >
-                    <MenuItem value="low">
-                      <Box display="flex" alignItems="center" gap={1}>
-                        <div
-                          style={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: "50%",
-                            backgroundColor: getPriorityColor("low"),
-                          }}
-                        />
-                        Low
-                      </Box>
-                    </MenuItem>
-                    <MenuItem value="medium">
-                      <Box display="flex" alignItems="center" gap={1}>
-                        <div
-                          style={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: "50%",
-                            backgroundColor: getPriorityColor("medium"),
-                          }}
-                        />
-                        Medium
-                      </Box>
-                    </MenuItem>
-                    <MenuItem value="high">
-                      <Box display="flex" alignItems="center" gap={1}>
-                        <div
-                          style={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: "50%",
-                            backgroundColor: getPriorityColor("high"),
-                          }}
-                        />
-                        High
-                      </Box>
-                    </MenuItem>
-                    <MenuItem value="urgent">
-                      <Box display="flex" alignItems="center" gap={1}>
-                        <div
-                          style={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: "50%",
-                            backgroundColor: getPriorityColor("urgent"),
-                          }}
-                        />
-                        Urgent
-                      </Box>
-                    </MenuItem>
-                  </Select>
-                </FormControl>
-              </Box>
-
-              <TextField
-                fullWidth
-                label="Due Date"
-                type="date"
-                value={editedTask.dueDate || ""}
-                onChange={(e) =>
-                  setEditedTask({ ...editedTask, dueDate: e.target.value })
-                }
-                sx={{ mb: 2 }}
-              />
-
-              {/* Tags */}
-              <Box mb={3}>
-                <TextField
-                  fullWidth
-                  label="Tags (Press Enter to add)"
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyDown={handleAddTag}
-                  variant="outlined"
-                  placeholder="Type and press Enter"
-                />
-                <Box display="flex" flexWrap="wrap" gap={1} mt={1}>
-                  {(editedTask.tags || []).map((tag, index) => (
-                    <Chip
-                      key={index}
-                      label={tag}
-                      onDelete={() => handleDeleteTag(tag)}
-                      color="primary"
-                      variant="outlined"
-                      size="small"
-                    />
-                  ))}
-                </Box>
-              </Box>
-
-              <Divider sx={{ my: 2 }} />
-
-              <Box className="task-info-section">
-                <Typography variant="subtitle2" color="text.secondary" mb={2}>
-                  Task Information
-                </Typography>
-
-                <Box display="flex" flexDirection="column" gap={2}>
-                  <Box display="flex" alignItems="center" gap={2}>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      width={120}
-                    >
-                      Assigned To:
-                    </Typography>
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <Avatar
-                        sx={{
-                          width: 32,
-                          height: 32,
-                          fontSize: "13px",
-                          backgroundColor: getAvatarColor(
-                            assignedToUsername || undefined,
-                          ),
-                        }}
-                      >
-                        {getInitials(assignedToUsername || undefined)}
-                      </Avatar>
-                      <Typography variant="body2">
-                        {assignedToUsername || "Unassigned"}
-                      </Typography>
-                    </Box>
-                  </Box>
-
-                  <Box display="flex" alignItems="center" gap={2}>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      width={120}
-                    >
-                      Created By:
-                    </Typography>
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <Avatar
-                        sx={{
-                          width: 32,
-                          height: 32,
-                          fontSize: "13px",
-                          backgroundColor: getAvatarColor(
-                            createdByUsername || undefined,
-                          ),
-                        }}
-                      >
-                        {getInitials(createdByUsername || undefined)}
-                      </Avatar>
-                      <Typography variant="body2">
-                        {createdByUsername || "Unknown"}
-                      </Typography>
-                    </Box>
-                  </Box>
-
-                  <Box display="flex" alignItems="center" gap={2}>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      width={120}
-                    >
-                      Created:
-                    </Typography>
-                    <Typography variant="body2">
-                      {new Date(task.createdAt).toLocaleString()}
-                    </Typography>
-                  </Box>
-
-                  <Box display="flex" alignItems="center" gap={2}>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      width={120}
-                    >
-                      Last Updated:
-                    </Typography>
-                    <Typography variant="body2">
-                      {new Date(task.updatedAt).toLocaleString()}
-                    </Typography>
-                  </Box>
-                </Box>
-              </Box>
-            </Box>
-          </DialogContent>
-
-          <Divider />
-
-          <DialogActions sx={{ px: 3, py: 2 }}>
+            )}
+          </Box>
+        )
+      }
+      actions={
+        task && (
+          <>
             <Button
               onClick={onClose}
               variant="outlined"
               sx={{ textTransform: "none" }}
             >
-              Cancel
+              {task.deleted ? "Close" : "Cancel"}
             </Button>
-            <Button
-              onClick={handleSave}
-              variant="contained"
-              sx={{
-                textTransform: "none",
-              }}
-            >
-              Save Changes
-            </Button>
-          </DialogActions>
-        </>
+            {!task.deleted && (
+              <Button
+                onClick={handleSave}
+                variant="contained"
+                sx={{ textTransform: "none" }}
+              >
+                Save Changes
+              </Button>
+            )}
+          </>
+        )
+      }
+    >
+      {task && (
+        <Box className="task-modal-content">
+          {task.deleted && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              This task has been deleted and is read-only.
+            </Alert>
+          )}
+          <TextField
+            fullWidth
+            label="Title"
+            value={editedTask.title || ""}
+            onChange={(e) =>
+              setEditedTask({ ...editedTask, title: e.target.value })
+            }
+            variant="outlined"
+            disabled={task.deleted}
+            sx={{ mb: 2 }}
+          />
+
+          <TextField
+            fullWidth
+            label="Description"
+            value={editedTask.description || ""}
+            onChange={(e) =>
+              setEditedTask({ ...editedTask, description: e.target.value })
+            }
+            multiline
+            rows={4}
+            variant="outlined"
+            disabled={task.deleted}
+            sx={{ mb: 2 }}
+          />
+
+          <Box display="flex" gap={2} mb={2}>
+            <FormControl fullWidth disabled={task.deleted}>
+              <InputLabel>Status</InputLabel>
+              <Select
+                value={editedTask.status || "todo"}
+                onChange={(e) =>
+                  setEditedTask({
+                    ...editedTask,
+                    status: e.target.value as Task["status"],
+                  })
+                }
+                label="Status"
+              >
+                <MenuItem value="todo">To Do</MenuItem>
+                <MenuItem value="in-progress">In Progress</MenuItem>
+                <MenuItem value="review">Need Review</MenuItem>
+                <MenuItem value="completed">Done</MenuItem>
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth disabled={task.deleted}>
+              <InputLabel>Priority</InputLabel>
+              <Select
+                value={editedTask.priority || "medium"}
+                onChange={(e) =>
+                  setEditedTask({
+                    ...editedTask,
+                    priority: e.target.value as Task["priority"],
+                  })
+                }
+                label="Priority"
+              >
+                <MenuItem value="low">
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <div
+                      style={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: "50%",
+                        backgroundColor: getPriorityColor("low"),
+                      }}
+                    />
+                    Low
+                  </Box>
+                </MenuItem>
+                <MenuItem value="medium">
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <div
+                      style={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: "50%",
+                        backgroundColor: getPriorityColor("medium"),
+                      }}
+                    />
+                    Medium
+                  </Box>
+                </MenuItem>
+                <MenuItem value="high">
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <div
+                      style={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: "50%",
+                        backgroundColor: getPriorityColor("high"),
+                      }}
+                    />
+                    High
+                  </Box>
+                </MenuItem>
+                <MenuItem value="urgent">
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <div
+                      style={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: "50%",
+                        backgroundColor: getPriorityColor("urgent"),
+                      }}
+                    />
+                    Urgent
+                  </Box>
+                </MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+
+          <TextField
+            fullWidth
+            label="Due Date"
+            type="date"
+            value={editedTask.dueDate || ""}
+            onChange={(e) =>
+              setEditedTask({ ...editedTask, dueDate: e.target.value })
+            }
+            disabled={task.deleted}
+            sx={{ mb: 2 }}
+          />
+
+          {/* Tags */}
+          <Box mb={3}>
+            <TextField
+              fullWidth
+              label="Tags (Press Enter to add)"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={handleAddTag}
+              variant="outlined"
+              placeholder="Type and press Enter"
+              disabled={task.deleted}
+            />
+            <Box display="flex" flexWrap="wrap" gap={1} mt={1}>
+              {(editedTask.tags || []).map((tag, index) => (
+                <Chip
+                  key={index}
+                  label={tag}
+                  onDelete={
+                    task.deleted ? undefined : () => handleDeleteTag(tag)
+                  }
+                  color="primary"
+                  variant="outlined"
+                  size="small"
+                />
+              ))}
+            </Box>
+          </Box>
+
+          <Divider sx={{ my: 2 }} />
+
+          <Box className="task-info-section">
+            <Typography variant="subtitle2" color="text.secondary" mb={2}>
+              Task Information
+            </Typography>
+
+            <Box display="flex" flexDirection="column" gap={2}>
+              <Box display="flex" alignItems="center" gap={2}>
+                <Typography variant="body2" color="text.secondary" width={120}>
+                  Assigned To:
+                </Typography>
+                <Box display="flex" alignItems="center" gap={1}>
+                  <Avatar
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      fontSize: "13px",
+                      backgroundColor: getAvatarColor(
+                        assignedToUsername || undefined,
+                      ),
+                    }}
+                  >
+                    {getInitials(assignedToUsername || undefined)}
+                  </Avatar>
+                  <Typography variant="body2">
+                    {assignedToUsername || "Unassigned"}
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box display="flex" alignItems="center" gap={2}>
+                <Typography variant="body2" color="text.secondary" width={120}>
+                  Created By:
+                </Typography>
+                <Box display="flex" alignItems="center" gap={1}>
+                  <Avatar
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      fontSize: "13px",
+                      backgroundColor: getAvatarColor(
+                        createdByUsername || undefined,
+                      ),
+                    }}
+                  >
+                    {getInitials(createdByUsername || undefined)}
+                  </Avatar>
+                  <Typography variant="body2">
+                    {createdByUsername || "Unknown"}
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box display="flex" alignItems="center" gap={2}>
+                <Typography variant="body2" color="text.secondary" width={120}>
+                  Created:
+                </Typography>
+                <Typography variant="body2">
+                  {new Date(task.createdAt).toLocaleString()}
+                </Typography>
+              </Box>
+
+              <Box display="flex" alignItems="center" gap={2}>
+                <Typography variant="body2" color="text.secondary" width={120}>
+                  Last Updated:
+                </Typography>
+                <Typography variant="body2">
+                  {new Date(task.updatedAt).toLocaleString()}
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
       )}
-    </Dialog>
+    </CustomisedModal>
   );
 };
 

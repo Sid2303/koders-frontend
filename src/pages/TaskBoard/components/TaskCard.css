@@ -8,6 +8,23 @@
   border: 1px solid #e5e7eb;
 }
 
+.task-card--deleted {
+  background: #f9fafb;
+  border: 1px dashed #d1d5db;
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+.task-card--deleted:hover {
+  opacity: 0.8;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.task-card-title--deleted {
+  text-decoration: line-through;
+  color: #9ca3af;
+}
+
 .task-card[draggable="true"] {
   opacity: 1 !important;
 }

@@ -24,15 +24,9 @@ interface Task {
   };
   dueDate?: string;
   tags?: string[];
+  deleted?: boolean;
   createdAt: string;
   updatedAt: string;
-}
-
-interface GroupedTasks {
-  todo: Task[];
-  "in-progress": Task[];
-  review: Task[];
-  completed: Task[];
 }
 
 const TaskBoard = () => {
@@ -257,6 +251,7 @@ const TaskBoard = () => {
           color="#ef4444"
           onUpdateStatus={handleUpdateStatus}
           onViewTask={handleViewTask}
+          onTaskDeleted={fetchTasks}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           onDrop={handleDrop}
@@ -270,6 +265,7 @@ const TaskBoard = () => {
           color="#3b82f6"
           onUpdateStatus={handleUpdateStatus}
           onViewTask={handleViewTask}
+          onTaskDeleted={fetchTasks}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           onDrop={handleDrop}
@@ -283,6 +279,7 @@ const TaskBoard = () => {
           color="#f59e0b"
           onUpdateStatus={handleUpdateStatus}
           onViewTask={handleViewTask}
+          onTaskDeleted={fetchTasks}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           onDrop={handleDrop}
@@ -296,6 +293,7 @@ const TaskBoard = () => {
           color="#10b981"
           onUpdateStatus={handleUpdateStatus}
           onViewTask={handleViewTask}
+          onTaskDeleted={fetchTasks}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           onDrop={handleDrop}

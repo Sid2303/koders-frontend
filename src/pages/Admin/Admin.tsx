@@ -4,16 +4,13 @@ import {
   CardContent,
   Typography,
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   IconButton,
   Chip,
   Alert,
   CircularProgress,
   Box,
 } from "@mui/material";
+import CustomisedModal from "../../components/CustomisedModal";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PersonIcon from "@mui/icons-material/Person";
 import AssignmentIcon from "@mui/icons-material/Assignment";
@@ -272,29 +269,31 @@ const Admin = () => {
       </div>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog
+      <CustomisedModal
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
+        maxWidth="xs"
+        showCloseButton={false}
+        title="Delete User"
+        actions={
+          <>
+            <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+            <Button
+              onClick={handleDeleteConfirm}
+              color="error"
+              variant="contained"
+            >
+              Delete
+            </Button>
+          </>
+        }
       >
-        <DialogTitle>Delete User</DialogTitle>
-        <DialogContent>
-          <Typography>
-            Are you sure you want to delete user{" "}
-            <strong>{selectedUser?.username}</strong>? This action cannot be
-            undone.
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-          <Button
-            onClick={handleDeleteConfirm}
-            color="error"
-            variant="contained"
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <Typography>
+          Are you sure you want to delete user{" "}
+          <strong>{selectedUser?.username}</strong>? This action cannot be
+          undone.
+        </Typography>
+      </CustomisedModal>
     </div>
   );
 };
