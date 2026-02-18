@@ -16,12 +16,12 @@
 }
 
 .dashboard-welcome {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 2px solid #e5e7eb;
   padding: 32px;
   border-radius: 16px;
   margin-bottom: 24px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  color: white;
+  color: #3a3b42;
 }
 
 .welcome-header h1 {
@@ -42,6 +42,28 @@
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.welcome-scope {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.scope-all {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid #93c5fd;
+}
+
+.scope-personal {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
 }
 
 .welcome-last-login {

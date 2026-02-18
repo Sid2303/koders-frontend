@@ -55,6 +55,13 @@ const AddTaskModal = ({ open, onClose, onCreate }: AddTaskModalProps) => {
     tags: [] as string[],
   });
   const [tagInput, setTagInput] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const isFormValid =
+    formData.title.trim() !== "" &&
+    formData.description.trim() !== "" &&
+    formData.assignedTo !== "" &&
+    formData.dueDate !== "";
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -90,9 +97,8 @@ const AddTaskModal = ({ open, onClose, onCreate }: AddTaskModalProps) => {
   }, [open, currentUser]);
 
   const handleCreate = () => {
-    if (!formData.title.trim()) {
-      return;
-    }
+    setSubmitted(true);
+    if (!isFormValid) return;
 
     const taskData = {
       ...formData,
@@ -115,6 +121,7 @@ const AddTaskModal = ({ open, onClose, onCreate }: AddTaskModalProps) => {
       tags: [],
     });
     setTagInput("");
+    setSubmitted(false);
     onClose();
   };
 
@@ -208,6 +215,12 @@ const AddTaskModal = ({ open, onClose, onCreate }: AddTaskModalProps) => {
             }
             variant="outlined"
             required
+            error={submitted && formData.title.trim() === ""}
+            helperText={
+              submitted && formData.title.trim() === ""
+                ? "Title is required"
+                : ""
+            }
             sx={{ mb: 2 }}
           />
 
@@ -221,6 +234,13 @@ const AddTaskModal = ({ open, onClose, onCreate }: AddTaskModalProps) => {
             multiline
             rows={4}
             variant="outlined"
+            required
+            error={submitted && formData.description.trim() === ""}
+            helperText={
+              submitted && formData.description.trim() === ""
+                ? "Description is required"
+                : ""
+            }
             sx={{ mb: 2 }}
           />
 
@@ -313,14 +333,17 @@ const AddTaskModal = ({ open, onClose, onCreate }: AddTaskModalProps) => {
           </Box>
 
           <Box display="flex" gap={2} mb={2}>
-            <FormControl fullWidth>
-              <InputLabel>Assign To</InputLabel>
+            <FormControl
+              fullWidth
+              error={submitted && formData.assignedTo === ""}
+            >
+              <InputLabel>Assign To *</InputLabel>
               <Select
                 value={formData.assignedTo}
                 onChange={(e) =>
                   setFormData({ ...formData, assignedTo: e.target.value })
                 }
-                label="Assign To"
+                label="Assign To *"
               >
                 <MenuItem value="">
                   <em>Unassigned</em>
@@ -343,6 +366,15 @@ const AddTaskModal = ({ open, onClose, onCreate }: AddTaskModalProps) => {
                   </MenuItem>
                 ))}
               </Select>
+              {submitted && formData.assignedTo === "" && (
+                <Typography
+                  variant="caption"
+                  color="error"
+                  sx={{ mt: 0.5, ml: 1.75 }}
+                >
+                  Please assign this task to someone
+                </Typography>
+              )}
             </FormControl>
 
             <TextField
@@ -352,6 +384,13 @@ const AddTaskModal = ({ open, onClose, onCreate }: AddTaskModalProps) => {
               value={formData.dueDate}
               onChange={(e) =>
                 setFormData({ ...formData, dueDate: e.target.value })
+              }
+              required
+              error={submitted && formData.dueDate === ""}
+              helperText={
+                submitted && formData.dueDate === ""
+                  ? "Due date is required"
+                  : ""
               }
               InputLabelProps={{
                 shrink: true,
@@ -398,7 +437,7 @@ const AddTaskModal = ({ open, onClose, onCreate }: AddTaskModalProps) => {
         <Button
           onClick={handleCreate}
           variant="contained"
-          disabled={!formData.title.trim()}
+          disabled={false}
           sx={{
             textTransform: "none",
             backgroundColor: "#3b82f6",

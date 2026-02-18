@@ -11,6 +11,8 @@ import WarningIcon from "@mui/icons-material/Warning";
 import { PieChart } from "@mui/x-charts/PieChart";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import PersonIcon from "@mui/icons-material/Person";
 
 interface Task {
   _id: string;
@@ -215,6 +217,8 @@ const Dashboard = () => {
     );
   };
 
+  const isAdminOrManager = user?.role === "admin" || user?.role === "manager";
+
   if (loading) {
     return (
       <div className="dashboard">
@@ -233,6 +237,21 @@ const Dashboard = () => {
               <LocalOfferIcon />
               Role: {user?.role || "user"}
             </span>
+            <span
+              className={`welcome-scope ${isAdminOrManager ? "scope-all" : "scope-personal"}`}
+            >
+              {isAdminOrManager ? (
+                <>
+                  <PeopleAltIcon sx={{ fontSize: 16 }} /> Showing all users'
+                  data
+                </>
+              ) : (
+                <>
+                  <PersonIcon sx={{ fontSize: 16 }} /> Showing your personal
+                  data
+                </>
+              )}
+            </span>
             <span className="welcome-date">
               <CalendarMonthIcon /> {getCurrentDate()}
             </span>
@@ -241,7 +260,11 @@ const Dashboard = () => {
       </div>
 
       <div className="dashboard-stats">
-        <h2 className="section-title">STATISTICS (ONLY MY TASKS)</h2>
+        <h2 className="section-title">
+          {isAdminOrManager
+            ? "STATISTICS (ALL USERS)"
+            : "STATISTICS (MY TASKS ONLY)"}
+        </h2>
         <div className="stats-grid">
           <StatCard
             icon={<AssignmentIcon sx={{ fontSize: 32, color: "#3b82f6" }} />}
@@ -269,7 +292,9 @@ const Dashboard = () => {
 
       <div className="dashboard-tasks">
         <div className="section-header">
-          <h2 className="section-title">MY ASSIGNED TASKS</h2>
+          <h2 className="section-title">
+            {isAdminOrManager ? "ALL ASSIGNED TASKS" : "MY ASSIGNED TASKS"}
+          </h2>
           <Link to="/tasks" className="view-all-link">
             View All →
           </Link>
@@ -297,7 +322,11 @@ const Dashboard = () => {
       </div>
 
       <div className="dashboard-chart">
-        <h2 className="section-title">TASK STATUS</h2>
+        <h2 className="section-title">
+          {isAdminOrManager
+            ? "TASK STATUS (ALL USERS)"
+            : "TASK STATUS (MY TASKS)"}
+        </h2>
         <div className="chart-container">
           {tasks.length > 0 ? (
             <PieChart
@@ -347,7 +376,11 @@ const Dashboard = () => {
       </div>
 
       <div className="dashboard-deadlines">
-        <h2 className="section-title">THIS WEEK'S DEADLINES</h2>
+        <h2 className="section-title">
+          {isAdminOrManager
+            ? "THIS WEEK'S DEADLINES (ALL USERS)"
+            : "THIS WEEK'S DEADLINES (MY TASKS)"}
+        </h2>
         <div className="deadlines-list">
           <div className="deadline-day">
             <div className="deadline-date">
