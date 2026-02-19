@@ -14,19 +14,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import PersonIcon from "@mui/icons-material/Person";
 
-interface Task {
-  _id: string;
-  title: string;
-  description?: string;
-  status: "todo" | "in-progress" | "review" | "completed";
-  priority: "low" | "medium" | "high" | "urgent";
-  assignedTo?: string;
-  createdBy: string;
-  dueDate?: string;
-  tags?: string[];
-  createdAt: string;
-  updatedAt: string;
-}
+import type { Task } from "../../types/task";
 
 interface TaskStats {
   total: number;

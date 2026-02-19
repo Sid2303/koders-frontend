@@ -14,28 +14,7 @@ import InputLabel from "@mui/material/InputLabel";
 import { getUser } from "../../utils/auth";
 import socket from "../../utils/socket";
 
-interface Task {
-  _id: string;
-  title: string;
-  description?: string;
-  status: "todo" | "in-progress" | "review" | "completed";
-  priority: "low" | "medium" | "high" | "urgent";
-  assignedTo?: {
-    _id: string;
-    username: string;
-    email: string;
-  };
-  createdBy: {
-    _id: string;
-    username: string;
-    email: string;
-  };
-  dueDate?: string;
-  tags?: string[];
-  deleted?: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { Task } from "../../types/task";
 
 interface User {
   _id: string;
@@ -50,6 +29,13 @@ interface Filters {
   deleted: string;
   sortBy: string;
   order: string;
+}
+
+interface GroupedTasks {
+  todo: Task[];
+  "in-progress": Task[];
+  review: Task[];
+  completed: Task[];
 }
 
 const TaskBoard = () => {
@@ -163,7 +149,7 @@ const TaskBoard = () => {
   }, []);
 
   const groupTasksByStatus = (taskList: Task[]) => {
-    const grouped = {
+    const grouped: GroupedTasks = {
       todo: [],
       "in-progress": [],
       review: [],

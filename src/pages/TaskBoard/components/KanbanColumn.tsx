@@ -1,27 +1,6 @@
 import TaskCard from "./TaskCard.tsx";
 import "./KanbanColumn.css";
-
-interface Task {
-  _id: string;
-  title: string;
-  description?: string;
-  status: "todo" | "in-progress" | "review" | "completed";
-  priority: "low" | "medium" | "high" | "urgent";
-  assignedTo?: {
-    _id: string;
-    username: string;
-    email: string;
-  };
-  createdBy: {
-    _id: string;
-    username: string;
-    email: string;
-  };
-  dueDate?: string;
-  tags?: string[];
-  createdAt: string;
-  updatedAt: string;
-}
+import type { Task } from "../../../types/task";
 
 interface KanbanColumnProps {
   title: string;
