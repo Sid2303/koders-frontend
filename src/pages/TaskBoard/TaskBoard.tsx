@@ -12,6 +12,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import { getUser } from "../../utils/auth";
+import socket from "../../utils/socket";
 
 interface Task {
   _id: string;
@@ -138,8 +139,31 @@ const TaskBoard = () => {
     fetchUsers();
   }, [fetchTasks, fetchUsers]);
 
+  useEffect(() => {
+    socket.connect();
+
+    socket.on("task:created", () => {
+      fetchTasks(filters);
+    });
+
+    socket.on("task:updated", () => {
+      fetchTasks(filters);
+    });
+
+    socket.on("task:deleted", () => {
+      fetchTasks(filters);
+    });
+
+    return () => {
+      socket.off("task:created");
+      socket.off("task:updated");
+      socket.off("task:deleted");
+      socket.disconnect();
+    };
+  }, []);
+
   const groupTasksByStatus = (taskList: Task[]) => {
-    const grouped: GroupedTasks = {
+    const grouped = {
       todo: [],
       "in-progress": [],
       review: [],
