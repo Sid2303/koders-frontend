@@ -51,6 +51,7 @@ const TaskBoard = () => {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [draggedTask, setDraggedTask] = useState<Task | null>(null);
+  const [draggingOver, setDraggingOver] = useState<string | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const currentUser = getUser();
   const isAdminOrManager =
@@ -170,23 +171,18 @@ const TaskBoard = () => {
     newStatus: "todo" | "in-progress" | "review" | "completed",
   ) => {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/tasks/${taskId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({ status: newStatus }),
+      await fetch(`${import.meta.env.VITE_API_URL}/tasks/${taskId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      );
-
-      if (response.ok) {
-        fetchTasks(filters);
-      }
+        body: JSON.stringify({ status: newStatus }),
+      });
+      // socket task:updated event will sync all clients
     } catch (error) {
       console.error("Error updating task status:", error);
+      fetchTasks(filters); // fallback re-fetch on error
     }
   };
 
@@ -278,19 +274,33 @@ const TaskBoard = () => {
 
   const handleDragStart = (task: Task) => {
     setDraggedTask(task);
+    socket.emit("task:drag:start", { taskId: task._id, status: task.status });
   };
 
   const handleDragEnd = () => {
     setDraggedTask(null);
+    setDraggingOver(null);
+    socket.emit("task:drag:end");
   };
 
   const handleDrop = (
     status: "todo" | "in-progress" | "review" | "completed",
   ) => {
     if (draggedTask && draggedTask.status !== status) {
+      // Optimistic update — move card immediately in local state
+      setGroupedTasks((prev) => {
+        const source = prev[draggedTask.status].filter(
+          (t) => t._id !== draggedTask._id,
+        );
+        const updatedTask = { ...draggedTask, status };
+        const target = [updatedTask, ...prev[status]];
+        return { ...prev, [draggedTask.status]: source, [status]: target };
+      });
+      // Tell the server — socket task:updated will sync all other clients
       handleUpdateStatus(draggedTask._id, status);
     }
     setDraggedTask(null);
+    setDraggingOver(null);
   };
 
   return (
@@ -477,7 +487,9 @@ const TaskBoard = () => {
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           onDrop={handleDrop}
+          onDragEnter={(s) => setDraggingOver(s)}
           isDragging={!!draggedTask}
+          isDraggingOver={draggingOver === "todo"}
         />
         <KanbanColumn
           title="In Progress"
@@ -491,7 +503,9 @@ const TaskBoard = () => {
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           onDrop={handleDrop}
+          onDragEnter={(s) => setDraggingOver(s)}
           isDragging={!!draggedTask}
+          isDraggingOver={draggingOver === "in-progress"}
         />
         <KanbanColumn
           title="Need Review"
@@ -505,7 +519,9 @@ const TaskBoard = () => {
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           onDrop={handleDrop}
+          onDragEnter={(s) => setDraggingOver(s)}
           isDragging={!!draggedTask}
+          isDraggingOver={draggingOver === "review"}
         />
         <KanbanColumn
           title="Done"
@@ -519,7 +535,9 @@ const TaskBoard = () => {
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           onDrop={handleDrop}
+          onDragEnter={(s) => setDraggingOver(s)}
           isDragging={!!draggedTask}
+          isDraggingOver={draggingOver === "completed"}
         />
       </div>
 

@@ -17,7 +17,11 @@ interface KanbanColumnProps {
   onDragStart: (task: Task) => void;
   onDragEnd: () => void;
   onDrop: (status: "todo" | "in-progress" | "review" | "completed") => void;
+  onDragEnter: (
+    status: "todo" | "in-progress" | "review" | "completed",
+  ) => void;
   isDragging: boolean;
+  isDraggingOver: boolean;
 }
 
 const KanbanColumn = ({
@@ -32,10 +36,17 @@ const KanbanColumn = ({
   onDragStart,
   onDragEnd,
   onDrop,
+  onDragEnter,
   isDragging,
+  isDraggingOver,
 }: KanbanColumnProps) => {
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+  };
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    onDragEnter(status);
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -45,8 +56,11 @@ const KanbanColumn = ({
 
   return (
     <div
-      className={`kanban-column ${isDragging ? "drag-over-enabled" : ""}`}
+      className={`kanban-column ${
+        isDraggingOver ? "drag-target" : isDragging ? "drag-over-enabled" : ""
+      }`}
       onDragOver={handleDragOver}
+      onDragEnter={handleDragEnter}
       onDrop={handleDrop}
     >
       <div className="kanban-column-header">
