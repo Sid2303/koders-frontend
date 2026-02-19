@@ -4,10 +4,10 @@ import { Snackbar, Alert } from "@mui/material";
 import "../Register/Register.css";
 import CustomisedTextInput from "../../components/CustomisedTextInput";
 
-const Login = () => {
+const ForgotPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [newPassword, setNewPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [toast, setToast] = useState<{
@@ -18,7 +18,7 @@ const Login = () => {
 
   const isEmailValid =
     email.includes("@") && email.includes(".") && email.length > 0;
-  const isPasswordValid = password.length >= 8;
+  const isPasswordValid = newPassword.length >= 6;
   const isFormValid = isEmailValid && isPasswordValid;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,62 +27,46 @@ const Login = () => {
 
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
-      const response = await fetch(`${apiUrl}/login`, {
+      const response = await fetch(`${apiUrl}/forgot-password`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, newPassword }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Login failed");
+        throw new Error(data.message || "Request failed");
       }
 
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-      }
-      if (data.user) {
-        localStorage.setItem("user", JSON.stringify(data.user));
-      }
+      if (data.token) localStorage.setItem("token", data.token);
+      if (data.user) localStorage.setItem("user", JSON.stringify(data.user));
 
       setToast({
         open: true,
-        message: "Login successful! Redirecting...",
+        message: "Password updated! Redirecting...",
         severity: "success",
       });
 
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 1500);
+      setTimeout(() => navigate("/dashboard"), 1500);
     } catch (err: unknown) {
       const errorMessage =
         err instanceof Error
           ? err.message
           : "Something went wrong. Please try again.";
-      setToast({
-        open: true,
-        message: errorMessage,
-        severity: "error",
-      });
+      setToast({ open: true, message: errorMessage, severity: "error" });
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleCloseToast = () => {
-    setToast({ ...toast, open: false });
   };
 
   return (
     <div className="register-container">
       <div className="register-form-section">
         <div className="register-form-wrapper">
-          <h1 className="register-title">Welcome back</h1>
+          <h1 className="register-title">Reset password</h1>
           <p className="register-subtitle">
-            Sign in to your account to continue
+            Enter your email and choose a new password.
           </p>
 
           <form className="register-form" onSubmit={handleSubmit}>
@@ -98,34 +82,31 @@ const Login = () => {
             />
 
             <CustomisedTextInput
-              label="Password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
+              label="New password"
+              id="newPassword"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="At least 6 characters"
               required
               valid={isPasswordValid}
               showToggle
               showPassword={showPassword}
               onTogglePassword={() => setShowPassword(!showPassword)}
             />
-            <Link to="/forgot-password" className="forgot-password-link">
-              <p className="underline">Forgot password?</p>
-            </Link>
 
             <button
               type="submit"
               className="register-button"
               disabled={!isFormValid || loading}
             >
-              {loading ? "Signing in..." : "Sign in"}
+              {loading ? "Updating..." : "Reset password"}
             </button>
           </form>
 
           <p className="register-footer">
-            Don't have an account?{" "}
-            <Link to="/register" className="register-link">
-              Create one
+            Remember your password?{" "}
+            <Link to="/login" className="register-link">
+              Sign in
             </Link>
           </p>
         </div>
@@ -134,11 +115,11 @@ const Login = () => {
       <Snackbar
         open={toast.open}
         autoHideDuration={6000}
-        onClose={handleCloseToast}
+        onClose={() => setToast({ ...toast, open: false })}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
         <Alert
-          onClose={handleCloseToast}
+          onClose={() => setToast({ ...toast, open: false })}
           severity={toast.severity}
           variant="filled"
           sx={{ width: "100%" }}
@@ -150,4 +131,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;

@@ -1,73 +1,106 @@
-# React + TypeScript + Vite
+# Koders Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A task management app built with React, TypeScript, and Vite.
 
-Currently, two official plugins are available:
+## Getting Started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone https://github.com/Sid2303/koders-frontend.git
+cd koders-frontend
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Create a `.env` file in the root:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```env
+VITE_API_URL=http://localhost:5000/api
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Then run:
+
+```bash
+npm run dev
+```
+
+App runs at `http://localhost:5173`
+
+## Scripts
+
+`npm run dev`
+`npm run build`
+`npm run preview`
+
+## Tech Stack
+
+- React 19 + TypeScript
+- Vite
+- React Router v7
+- Material UI
+- Socket.io
+- Tailwind CSS
+
+## Architecture
+
+```mermaid
+graph TD
+    Browser["Browser (React App)"]
+
+    subgraph Pages
+        Home
+        Login
+        Register
+        ForgotPassword
+        Dashboard
+        TaskBoard
+        Profile
+        Admin
+    end
+
+    subgraph Routes
+        PublicRoutes["PublicRoutes\n/ /login /register /forgot-password"]
+        RequireAuth["RequireAuth\n/dashboard /tasks /profile"]
+        RequireAdmin["RequireAdmin\n/admin"]
+    end
+
+    subgraph Components
+        Navbar
+        CustomisedModal
+        CustomisedTextInput
+        KanbanColumn
+        TaskCard
+        TaskModal
+        AddTaskModal
+    end
+
+    subgraph Utils
+        auth["auth.ts\nJWT helpers"]
+        socket["socket.ts\nSocket.io client"]
+    end
+
+    Browser --> Routes
+    Routes --> Pages
+    Pages --> Components
+    Pages --> Utils
+
+    socket -- "task:created\ntask:updated\ntask:deleted" --> TaskBoard
+    auth -- "token + user" --> LocalStorage["localStorage"]
+
+    Utils --> API["Backend REST API\nVITE_API_URL"]
+    API -- "HTTP" --> Utils
+```
+
+## Deployment
+
+### Vercel
+
+1. Push to GitHub
+2. Import repo on [vercel.com](https://vercel.com)
+3. Add `VITE_API_URL` in **Settings Environment Variables**
+4. Deploy
+
+### Docker
+
+```bash
+docker build --build-arg VITE_API_URL=https://your-api.com/api -t koders-frontend .
+docker run -p 80:80 koders-frontend
 ```

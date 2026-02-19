@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Snackbar, Alert } from "@mui/material";
 import "./Register.css";
+import CustomisedTextInput from "../../components/CustomisedTextInput";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -143,48 +144,36 @@ const Register = () => {
           <h1 className="register-title">Welcome to Task Manager</h1>
 
           <form className="register-form" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className={isEmailValid ? "input-valid" : ""}
-                required
-              />
-            </div>
+            <CustomisedTextInput
+              label="Email"
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              valid={!!isEmailValid}
+            />
 
-            <div className="form-group">
-              <label htmlFor="username">Username</label>
-              <input
-                type="text"
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className={isUsernameValid ? "input-valid" : ""}
-                required
-              />
-            </div>
+            <CustomisedTextInput
+              label="Username"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              valid={isUsernameValid}
+            />
 
-            <div className="form-group">
-              <label htmlFor="password">
-                Password
-                <button
-                  type="button"
-                  className="toggle-password"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? "Hide" : "Show"}
-                </button>
-              </label>
-              <input
-                type={showPassword ? "text" : "password"}
+            <div>
+              <CustomisedTextInput
+                label="Password"
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className={isPasswordValid ? "input-valid" : ""}
                 required
+                valid={isPasswordValid}
+                showToggle
+                showPassword={showPassword}
+                onTogglePassword={() => setShowPassword(!showPassword)}
               />
               <div className="password-requirements">
                 <span

@@ -4,7 +4,6 @@ import { isAuthenticated, getUser } from "../utils/auth";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Profile from "../pages/Profile/Profile";
 import Admin from "../pages/Admin/Admin";
-import NotFound from "../pages/NotFound/NotFound";
 import TaskBoard from "../pages/TaskBoard/TaskBoard";
 
 const RequireAuth = () => {
@@ -36,7 +35,6 @@ const ProtectedRoutes = () => {
       <Route element={<RequireAdmin />}>
         <Route path="/admin" element={<Admin />} />
       </Route>
-      <Route path="*" element={<NotFound />} />
     </>
   );
 };

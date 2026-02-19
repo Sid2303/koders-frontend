@@ -13,6 +13,8 @@ import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import PersonIcon from "@mui/icons-material/Person";
+import Chip from "@mui/material/Chip";
+import CustomisedModal from "../../components/CustomisedModal";
 
 import type { Task } from "../../types/task";
 
@@ -33,6 +35,7 @@ const Dashboard = () => {
     overdue: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   const fetchDashboardData = useCallback(async () => {
     try {
@@ -200,12 +203,27 @@ const Dashboard = () => {
   };
 
   const handleViewDetails = (task: Task) => {
-    alert(
-      `Task: ${task.title}\n\nDescription: ${task.description || "No description"}\n\nStatus: ${getStatusLabel(task.status)}\nPriority: ${task.priority}\nDue Date: ${formatDate(task.dueDate)}\n\nTags: ${task.tags?.join(", ") || "None"}`,
-    );
+    setSelectedTask(task);
   };
 
   const isAdminOrManager = user?.role === "admin" || user?.role === "manager";
+
+  const priorityColors: Record<string, string> = {
+    urgent: "#dc2626",
+    high: "#ef4444",
+    medium: "#f59e0b",
+    low: "#10b981",
+  };
+
+  const statusColors: Record<
+    string,
+    "default" | "warning" | "info" | "success"
+  > = {
+    todo: "default",
+    "in-progress": "warning",
+    review: "info",
+    completed: "success",
+  };
 
   if (loading) {
     return (
@@ -435,6 +453,101 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Task Detail Modal */}
+      <CustomisedModal
+        open={!!selectedTask}
+        onClose={() => setSelectedTask(null)}
+        title={selectedTask?.title ?? ""}
+        maxWidth="sm"
+      >
+        {selectedTask && (
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+          >
+            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+              <Chip
+                label={getStatusLabel(selectedTask.status)}
+                color={statusColors[selectedTask.status] ?? "default"}
+                size="small"
+              />
+              <Chip
+                label={selectedTask.priority.toUpperCase()}
+                size="small"
+                style={{
+                  backgroundColor: priorityColors[selectedTask.priority],
+                  color: "#fff",
+                }}
+              />
+            </div>
+
+            {selectedTask.description && (
+              <div>
+                <div
+                  style={{
+                    fontSize: "12px",
+                    color: "#6b7280",
+                    marginBottom: "4px",
+                  }}
+                >
+                  Description
+                </div>
+                <div style={{ fontSize: "14px" }}>
+                  {selectedTask.description}
+                </div>
+              </div>
+            )}
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "12px",
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    fontSize: "12px",
+                    color: "#6b7280",
+                    marginBottom: "4px",
+                  }}
+                >
+                  Due Date
+                </div>
+                <div style={{ fontSize: "14px" }}>
+                  {formatDate(selectedTask.dueDate)}
+                </div>
+              </div>
+              {selectedTask.tags && selectedTask.tags.length > 0 && (
+                <div>
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "#6b7280",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    Tags
+                  </div>
+                  <div
+                    style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}
+                  >
+                    {selectedTask.tags.map((tag) => (
+                      <Chip
+                        key={tag}
+                        label={tag}
+                        size="small"
+                        variant="outlined"
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </CustomisedModal>
     </div>
   );
 };

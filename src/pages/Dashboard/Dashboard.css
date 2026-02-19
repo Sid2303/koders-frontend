@@ -402,10 +402,17 @@
 
   .task-actions {
     flex-direction: column;
+    width: 100%;
   }
 
   .btn-view,
   .btn-update {
     width: 100%;
+  }
+
+  .task-item {
+    display: flex;
+    flex-direction: column;
+    padding: 25px 15px !important;
   }
 }
